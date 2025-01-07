@@ -66,6 +66,7 @@
 <script>
 import { putTarefa } from 'src/services/tarefasService'
 import { putSubtarefa } from 'src/services/subtarefaService'
+import { Notify } from 'quasar'
 
 export default {
   name: 'TarefaComponente',
@@ -95,10 +96,10 @@ export default {
       try {
         this.tarefaLocal.status = 'em andamento'
         await putTarefa(this.tarefaLocal.id, { status: 'em andamento' })
-        this.$q.notify({ type: 'positive', message: 'Tarefa iniciada com sucesso!' })
+        Notify.create({ type: 'positive', message: 'Tarefa iniciada com sucesso!' })
       } catch (error) {
         console.error('Erro ao começar tarefa:', error)
-        this.$q.notify({ type: 'negative', message: 'Erro ao começar a tarefa.' })
+        Notify.create({ type: 'negative', message: 'Erro ao começar a tarefa.' })
       }
     },
 
@@ -110,10 +111,10 @@ export default {
         const message = isCompleted
           ? 'Tarefa marcada como concluída!'
           : 'Tarefa marcada como em andamento!'
-        this.$q.notify({ type: 'positive', message })
+        Notify.create({ type: 'positive', message })
       } catch (error) {
         console.error('Erro ao atualizar status da tarefa:', error)
-        this.$q.notify({ type: 'negative', message: 'Erro ao atualizar a tarefa.' })
+        Notify.create({ type: 'negative', message: 'Erro ao atualizar a tarefa.' })
       }
     },
 
@@ -124,10 +125,10 @@ export default {
         if (index !== -1) {
           this.tarefaLocal.subtarefas[index] = updatedSubtarefa
         }
-        this.$q.notify({ type: 'positive', message: 'Status da subtarefa atualizado!' })
+        Notify.create({ type: 'positive', message: 'Status da subtarefa atualizado!' })
       } catch (error) {
         console.error('Erro ao atualizar subtarefa:', error)
-        this.$q.notify({ type: 'negative', message: 'Erro ao atualizar subtarefa.' })
+        Notify.create({ type: 'negative', message: 'Erro ao atualizar subtarefa.' })
       }
     },
   },
