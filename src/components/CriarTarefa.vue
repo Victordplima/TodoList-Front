@@ -104,7 +104,7 @@ export default {
 </script>
 
 <style scoped>
-.q-dialog {
-  max-width: 400px;
+.q-card {
+  width: 600px;
 }
 </style>

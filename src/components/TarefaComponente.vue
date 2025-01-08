@@ -2,17 +2,26 @@
   <q-card class="q-mb-md">
     <q-card-section>
       <div :class="{ 'completed-task': tarefaLocal.status === 'concluída' }">
-        <div class="text-h6">{{ tarefaLocal.titulo }}</div>
-        <div class="text-subtitle2">{{ tarefaLocal.descricao }}</div>
-        <div>
-          <span
-            v-for="categoria in tarefaLocal.categorias"
-            :key="categoria.id"
-            :style="{ backgroundColor: categoria.cor_em_hexadecimal }"
-            class="category-label q-mr-sm"
-          >
-            {{ categoria.nome }}
-          </span>
+        <div class="row items-center justify-between">
+          <div>
+            <div class="text-h6">{{ tarefaLocal.titulo }}</div>
+            <div class="text-subtitle2">{{ tarefaLocal.descricao }}</div>
+            <div>
+              <span
+                v-for="categoria in tarefaLocal.categorias"
+                :key="categoria.id"
+                :style="{ backgroundColor: categoria.cor_em_hexadecimal }"
+                class="category-label q-mr-sm"
+              >
+                {{ categoria.nome }}
+              </span>
+            </div>
+          </div>
+          <MenuOpcoes
+            :tarefaId="tarefaLocal.id"
+            @editar-tarefa="editarTarefa"
+            @excluir-tarefa="excluirTarefa"
+          />
         </div>
       </div>
 
@@ -67,6 +76,7 @@
 import { putTarefa } from 'src/services/tarefasService'
 import { putSubtarefa } from 'src/services/subtarefaService'
 import { Notify } from 'quasar'
+import MenuOpcoes from './MenuOpcoes.vue'
 
 export default {
   name: 'TarefaComponente',
@@ -75,6 +85,9 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  components: {
+    MenuOpcoes,
   },
   data() {
     return {
@@ -130,6 +143,16 @@ export default {
         console.error('Erro ao atualizar subtarefa:', error)
         Notify.create({ type: 'negative', message: 'Erro ao atualizar subtarefa.' })
       }
+    },
+
+    editarTarefa(tarefaId) {
+      console.log('Editar tarefa:', tarefaId)
+      // Lógica para editar a tarefa
+    },
+
+    excluirTarefa(tarefaId) {
+      console.log('Excluir tarefa:', tarefaId)
+      // Lógica para excluir a tarefa
     },
   },
 }

@@ -1,12 +1,33 @@
 <template>
   <div class="container">
-    <q-btn @click="loadTarefas" label="Carregar Tarefas" color="primary" class="q-mb-md" />
+    <q-btn
+      @click="loadTarefas"
+      label="Carregar Tarefas"
+      color="primary"
+      class="q-mb-md"
+      :loading="loading"
+      :disable="loading"
+    />
     <CriarTarefa @tarefa-criada="onTarefaCriada" />
 
     <q-list bordered class="q-list-custom">
-      <q-item v-for="tarefa in tarefas" :key="tarefa.id">
-        <TarefaComponente :tarefa="tarefa" />
-      </q-item>
+      <template v-if="loading">
+        <q-item>
+          <q-spinner color="primary" class="q-my-md" />
+        </q-item>
+      </template>
+      <template v-else-if="tarefas.length > 0">
+        <q-item v-for="tarefa in tarefas" :key="tarefa.id">
+          <TarefaComponente :tarefa="tarefa" />
+        </q-item>
+      </template>
+      <template v-else>
+        <q-item>
+          <div class="text-grey text-center q-my-md">
+            Nenhuma tarefa encontrada. Crie uma nova tarefa.
+          </div>
+        </q-item>
+      </template>
     </q-list>
   </div>
 </template>
