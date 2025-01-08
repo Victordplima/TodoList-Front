@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <q-btn @click="loadTarefas" label="Carregar Tarefas" color="primary" class="q-mb-md" />
+    <CriarTarefa @tarefa-criada="onTarefaCriada" />
 
     <q-list bordered class="q-list-custom">
       <q-item v-for="tarefa in tarefas" :key="tarefa.id">
@@ -13,11 +14,13 @@
 <script>
 import { getTarefas } from 'src/services/tarefasService'
 import TarefaComponente from './TarefaComponente.vue'
+import CriarTarefa from './CriarTarefa.vue'
 
 export default {
   name: 'ListaTarefas',
   components: {
     TarefaComponente,
+    CriarTarefa,
   },
   data() {
     return {
@@ -39,8 +42,16 @@ export default {
         this.loading = false
       }
     },
+
+    /**
+     *
+     * @param {Object} tarefa
+     */
+    onTarefaCriada(tarefa) {
+      this.tarefas.unshift(tarefa)
+    },
   },
-  onMounted() {
+  mounted() {
     this.loadTarefas()
   },
 }

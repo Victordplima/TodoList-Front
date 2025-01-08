@@ -14,10 +14,21 @@ export const getTarefas = async () => {
 
 export const postTarefa = async (tarefa) => {
   try {
-    const response = await axios.post(API_URL, tarefa)
-    return response.data
+    const response = await axios.post(API_URL, {
+      titulo: tarefa.titulo, // Obrigatório
+      descricao: tarefa.descricao || '', // Opcional
+      categorias: tarefa.categorias || [], // Array de IDs das categorias (máximo 3)
+    })
+
+    return response.data // Retorna os dados da tarefa criada
   } catch (error) {
     console.error('Erro ao criar tarefa:', error)
+
+    if (error.response) {
+      // Exibe mensagens detalhadas baseadas no erro HTTP
+      console.error('Detalhes do erro:', error.response.data)
+    }
+
     throw error
   }
 }

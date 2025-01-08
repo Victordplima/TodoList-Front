@@ -10,20 +10,22 @@
 
         <q-card-section>
           <q-input v-model="titulo" label="Título" filled />
-          <q-input v-model="descricao" label="Descrição" filled type="textarea" />
+          <q-input v-model="descricao" label="Descrição (opcional)" filled type="textarea" />
 
           <q-select
-            v-model="categoriaSelecionada"
+            v-model="categoriasSelecionadas"
             :options="categorias"
-            label="Selecione a Categoria"
-            emit-value
-            map-options
+            label="Selecione as Categorias"
+            multiple
+            option-value="id"
+            option-label="nome"
+            filled
           />
         </q-card-section>
 
-        <q-card-actions>
+        <q-card-actions align="right">
           <q-btn @click="closeModal" label="Cancelar" color="secondary" />
-          <q-btn @click="criarTarefa" label="Criar" color="primary" />
+          <q-btn @click="criarTarefa" label="Criar" color="primary" :disable="isLoading" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -31,8 +33,9 @@
 </template>
 
 <script>
-import { postTarefa } from 'src/services/tarefaService'
+import { postTarefa } from 'src/services/tarefasService'
 import { getCategorias } from 'src/services/categoriaService'
+import { Notify } from 'quasar'
 
 export default {
   name: 'CriarTarefa',
@@ -41,14 +44,15 @@ export default {
       isModalOpen: false,
       titulo: '',
       descricao: '',
-      categoriaSelecionada: null,
+      categoriasSelecionadas: [],
       categorias: [],
+      isLoading: false,
     }
   },
   methods: {
-    openModal() {
+    async openModal() {
       this.isModalOpen = true
-      this.loadCategorias()
+      await this.loadCategorias()
     },
 
     closeModal() {
@@ -59,35 +63,41 @@ export default {
     async loadCategorias() {
       try {
         const response = await getCategorias()
-        this.categorias = response.categorias
+        this.categorias = response.categorias || []
       } catch (error) {
         console.error('Erro ao carregar categorias:', error)
       }
     },
 
     async criarTarefa() {
-      if (this.titulo && this.descricao && this.categoriaSelecionada) {
-        const tarefa = {
+      if (this.titulo) {
+        const novaTarefa = {
           titulo: this.titulo,
-          descricao: this.descricao,
-          categoria_id: this.categoriaSelecionada,
+          descricao: this.descricao || '',
+          categorias: this.categoriasSelecionadas.map((categoria) => categoria.id) || '',
         }
 
         try {
-          await postTarefa(tarefa)
+          const tarefaCriada = await postTarefa(novaTarefa)
+          this.$emit('tarefa-criada', tarefaCriada)
+          Notify.create({ type: 'positive', message: 'Tarefa criada com sucesso!' })
           this.closeModal()
         } catch (error) {
           console.error('Erro ao criar tarefa:', error)
+          Notify.create({
+            type: 'negative',
+            message: 'Erro ao criar tarefa. Por favor, tente novamente.',
+          })
         }
       } else {
-        alert('Preencha todos os campos!')
+        Notify.create({ type: 'warning', message: 'O título é obrigatório!' })
       }
     },
 
     resetForm() {
       this.titulo = ''
       this.descricao = ''
-      this.categoriaSelecionada = null
+      this.categoriasSelecionadas = []
     },
   },
 }
